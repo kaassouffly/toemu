@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animierte Regenbogen-Karte</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .card-container {
+            position: relative;
+            width: 320px;
+            height: 400px;
+        }
+
+        .rainbow-border {
+            position: absolute;
+            inset: 0;
+            padding: 3px;
+            border-radius: 24px;
+            background: conic-gradient(
+                from var(--angle, 0deg),
+                #ff0000 0deg,
+                #ff8c00 51.4deg,
+                #ffd700 102.8deg,
+                #32cd32 154.2deg,
+                #00bfff 205.6deg,
+                #8a2be2 257deg,
+                #ff1493 308.4deg,
+                #ff0000 360deg
+            );
+            animation: rotateBorder 4s linear infinite;
+        }
+
+        @keyframes rotateBorder {
+            0% {
+                --angle: 0deg;
+            }
+            100% {
+                --angle: 360deg;
+            }
+        }
+
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        .card-header {
+            text-align: center;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .card-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .card-description {
+            font-size: 15px;
+            line-height: 1.5;
+            color: #444;
+            margin: 0;
+        }
+
+        .card-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 24px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 0 0 4px 0;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .card-footer {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(0, 0, 0, 0.05);
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        /* Glow-Effekt für den Rand */
+        .rainbow-border::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 26px;
+            background: conic-gradient(
+                from var(--angle, 0deg),
+                #ff0000 0deg,
+                #ff8c00 51.4deg,
+                #ffd700 102.8deg,
+                #32cd32 154.2deg,
+                #00bfff 205.6deg,
+                #8a2be2 257deg,
+                #ff1493 308.4deg,
+                #ff0000 360deg
+            );
+            animation: rotateBorder 4s linear infinite;
+            filter: blur(8px);
+            opacity: 0.6;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="card-container">
+        <div class="rainbow-border">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🌈</div>
+                    <h2 class="card-title">Rainbow Card</h2>
+                    <p class="card-subtitle">Animierter Regenbogen-Rand</p>
+                </div>
+                
+                <div class="card-content">
+                    <p class="card-description">
+                        Diese Karte zeigt einen wunderschönen animierten Regenbogen-Rand, 
+                        der kontinuierlich um die Karte rotiert, ohne dass die Karte selbst gedreht wird.
+                    </p>
+                    
+                    <div class="card-stats">
+                        <div class="stat">
+                            <div class="stat-value">360°</div>
+                            <div class="stat-label">Rotation</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">3s</div>
+                            <div class="stat-label">Duration</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">∞</div>
+                            <div class="stat-label">Loop</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <button class="btn btn-secondary" onclick="toggleAnimation()">
+                        Pause
+                    </button>
+                    <button class="btn btn-primary" onclick="changeSpeed()">
+                        Speed ✨
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isAnimationPaused = false;
+        let currentSpeed = 4;
+        const speeds = [1, 2, 4, 6, 8];
+        let speedIndex = 2; // Start bei 4s
+
+        function toggleAnimation() {
+            const rainbowBorder = document.querySelector('.rainbow-border');
+            const rainbowGlow = document.querySelector('.rainbow-border::before');
+            const btn = document.querySelector('.btn-secondary');
+            
+            if (isAnimationPaused) {
+                rainbowBorder.style.animationPlayState = 'running';
+                btn.textContent = 'Pause';
+                isAnimationPaused = false;
+            } else {
+                rainbowBorder.style.animationPlayState = 'paused';
+                btn.textContent = 'Play';
+                isAnimationPaused = true;
+            }
+        }
+
+        function changeSpeed() {
+            speedIndex = (speedIndex + 1) % speeds.length;
+            currentSpeed = speeds[speedIndex];
+            
+            const rainbowBorder = document.querySelector('.rainbow-border');
+            const style = document.createElement('style');
+            
+            style.textContent = `
+                .rainbow-border,
+                .rainbow-border::before {
+                    animation-duration: ${currentSpeed}s !important;
+                }
+            `;
+            
+            // Entferne vorherige Style-Tags
+            const existingStyles = document.querySelectorAll('style[data-speed]');
+            existingStyles.forEach(s => s.remove());
+            
+            style.setAttribute('data-speed', 'true');
+            document.head.appendChild(style);
+            
+            // Button-Text aktualisieren
+            const btn = document.querySelector('.btn-primary');
+            btn.textContent = `${currentSpeed}s ✨`;
+            
+            // Kurzes Feedback
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                btn.style.transform = '';
+            }, 150);
+        }
+    </script>
+</body>
+</html>
