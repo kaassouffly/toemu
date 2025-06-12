@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Garden</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(ellipse at center, 
+                #ffe0e6 0%, 
+                #ffb3c1 30%, 
+                #ff8fa3 60%, 
+                #ff6b8a 100%);
+            overflow: hidden;
+            font-family: 'Georgia', serif;
+            cursor: none;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><radialGradient id="sparkle"><stop offset="0%" stop-color="rgba(255,255,255,0.8)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient></defs><circle cx="10" cy="20" r="1" fill="url(%23sparkle)"/><circle cx="80" cy="80" r="1.5" fill="url(%23sparkle)"/><circle cx="30" cy="70" r="0.8" fill="url(%23sparkle)"/><circle cx="70" cy="30" r="1.2" fill="url(%23sparkle)"/><circle cx="50" cy="10" r="0.6" fill="url(%23sparkle)"/><circle cx="90" cy="50" r="1" fill="url(%23sparkle)"/></svg>') repeat;
+            animation: sparkleMove 20s linear infinite;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .love-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .heart-garden {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            cursor: pointer;
+        }
+
+        .main-heart {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 90px;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .heart {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: '';
+            position: absolute;
+            width: 52px;
+            height: 80px;
+            background: linear-gradient(135deg, #ff6b8a 0%, #c44569 50%, #8b1538 100%);
+            border-radius: 50px 50px 0 0;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+            box-shadow: 
+                0 0 20px rgba(255, 107, 138, 0.6),
+                inset 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .heart::after {
+            left: 46px;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        .heart::before {
+            left: 0;
+        }
+
+        .floating-heart {
+            position: absolute;
+            font-size: 20px;
+            color: #ff6b8a;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .love-message {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 107, 138, 0.3);
+            border-radius: 25px;
+            padding: 15px 25px;
+            font-size: 14px;
+            color: #8b1538;
+            font-weight: 500;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(255, 107, 138, 0.2);
+            animation: messageFloat 6s ease-in-out infinite;
+            max-width: 200px;
+            line-height: 1.4;
+        }
+
+        .love-aura {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: radial-gradient(circle, 
+                rgba(255, 107, 138, 0.3) 0%, 
+                rgba(255, 107, 138, 0.1) 50%, 
+                transparent 100%);
+            animation: auraPulse 4s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        .love-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, #ffb3c1 0%, #ff6b8a 100%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particleFloat 8s ease-in-out infinite;
+        }
+
+        .kiss-emoji {
+            position: absolute;
+            font-size: 24px;
+            animation: kissFloat 5s ease-in-out infinite;
+            pointer-events: none;
+            filter: drop-shadow(0 0 8px rgba(255, 107, 138, 0.4));
+        }
+
+        .love-counter {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 107, 138, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(255, 107, 138, 0.2);
+            z-index: 100;
+        }
+
+        .love-title {
+            font-size: 18px;
+            color: #8b1538;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .love-count {
+            font-size: 36px;
+            color: #ff6b8a;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 107, 138, 0.5);
+        }
+
+        .love-label {
+            font-size: 12px;
+            color: #c44569;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .custom-cursor {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            pointer-events: none;
+            z-index: 1000;
+            transition: all 0.1s ease;
+            font-size: 20px;
+            transform: translate(-50%, -50%);
+        }
+
+        .love-quote {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px 30px;
+            font-style: italic;
+            color: #8b1538;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(255, 107, 138, 0.2);
+            animation: quoteGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+
+        @keyframes auraPulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.6;
+            }
+        }
+
+        @keyframes messageFloat {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translateY(-15px) rotate(2deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(0px) scale(0);
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            80% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(0);
+                opacity: 0;
+            }
+        }
+
+        @keyframes kissFloat {
+            0%, 100% {
+                transform: translateY(0px) rotate(-5deg);
+                opacity: 0.7;
+            }
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes sparkleMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100px, -100px); }
+        }
+
+        @keyframes quoteGlow {
+            0%, 100% {
+                box-shadow: 0 10px 30px rgba(255, 107, 138, 0.2);
+            }
+            50% {
+                box-shadow: 0 15px 40px rgba(255, 107, 138, 0.4);
+            }
+        }
+
+        .heart-garden:hover .heart {
+            animation-duration: 1s;
+        }
+
+        .heart-garden:hover .love-aura {
+            animation-duration: 2s;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .heart-garden {
+                width: 350px;
+                height: 350px;
+            }
+            
+            .main-heart {
+                width: 70px;
+                height: 63px;
+            }
+            
+            .love-counter {
+                top: 20px;
+                right: 20px;
+                padding: 15px;
+            }
+            
+            .love-quote {
+                bottom: 20px;
+                padding: 15px 20px;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="love-container">
+        <div class="custom-cursor" id="cursor">💕</div>
+        
+        <div class="love-counter">
+            <div class="love-title">💖 Love Meter</div>
+            <div class="love-count" id="loveCount">0</div>
+            <div class="love-label">Herzen gesammelt</div>
+        </div>
+
+        <div class="heart-garden" id="heartGarden">
+            <div class="love-aura"></div>
+            <div class="love-aura" style="animation-delay: 2s; width: 300px; height: 300px;"></div>
+            
+            <div class="main-heart" id="mainHeart">
+                <div class="heart"></div>
+            </div>
+        </div>
+
+        <div class="love-quote" id="loveQuote">
+            "Liebe ist die Poesie der Sinne." ✨
+        </div>
+    </div>
+
+    <script>
+        // Custom Cursor
+        const cursor = document.getElementById('cursor');
+        let mouseX = 0, mouseY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function updateCursor() {
+            cursor.style.left = mouseX + 'px';
+            cursor.style.top = mouseY + 'px';
+            requestAnimationFrame(updateCursor);
+        }
+        updateCursor();
+
+        // Love Counter
+        let loveCount = 0;
+        const loveCountElement = document.getElementById('loveCount');
+
+        // Liebevolle Nachrichten
+        const loveMessages = [
+            "Du bist wunderbar! 💕",
+            "Liebe ist überall 🌸",
+            "Du machst mich glücklich ✨",
+            "Zusammen sind wir stark 💪",
+            "Du bist mein Sonnenschein ☀️",
+            "Liebe kennt keine Grenzen 🌈",
+            "Du bist einzigartig 🦋",
+            "Herzen schlagen im Einklang 💓",
+            "Du bedeutest mir alles 🌹",
+            "Liebe ist die Antwort 💫"
+        ];
+
+        // Liebeszitate
+        const loveQuotes = [
+            "\"Liebe ist die Poesie der Sinne.\" ✨",
+            "\"In der Liebe gibt es keine Unmöglichkeiten.\" 💫",
+            "\"Wahre Liebe kennt keine Grenzen.\" 🌈",
+            "\"Liebe ist die größte Kraft im Universum.\" 🌟",
+            "\"Ein Herz, das liebt, bleibt für immer jung.\" 💕"
+        ];
+
+        // Schwebende Herzen erstellen
+        function createFloatingHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'floating-heart';
+            heart.innerHTML = '💖';
+            
+            const x = Math.random() * 400;
+            const y = Math.random() * 400;
+            
+            heart.style.left = x + 'px';
+            heart.style.top = y + 'px';
+            heart.style.fontSize = (15 + Math.random() * 15) + 'px';
+            heart.style.animationDuration = (3 + Math.random() * 4) + 's';
+            heart.style.animationDelay = Math.random() * 2 + 's';
+            
+            document.getElementById('heartGarden').appendChild(heart);
+            
+            setTimeout(() => {
+                if (heart.parentNode) {
+                    heart.parentNode.removeChild(heart);
+                }
+            }, 7000);
+        }
+
+        // Liebes-Partikel erstellen
+        function createLoveParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'love-particle';
+            
+            const centerX = 250;
+            const centerY = 250;
+            const angle = Math.random() * 360;
+            const radius = 50 + Math.random() * 100;
+            
+            const x = centerX + Math.cos(angle * Math.PI / 180) * radius;
+            const y = centerY + Math.sin(angle * Math.PI / 180) * radius;
+            
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            particle.style.animationDelay = Math.random() * 3 + 's';
+            
+            document.getElementById('heartGarden').appendChild(particle);
+            
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, 8000);
+        }
+
+        // Kuss-Emojis erstellen
+        function createKissEmoji() {
+            const kiss = document.createElement('div');
+            kiss.className = 'kiss-emoji';
+            kiss.innerHTML = Math.random() > 0.5 ? '😘' : '💋';
+            
+            const x = Math.random() * 400;
+            const y = Math.random() * 400;
+            
+            kiss.style.left = x + 'px';
+            kiss.style.top = y + 'px';
+            kiss.style.animationDelay = Math.random() * 2 + 's';
+            kiss.style.animationDuration = (4 + Math.random() * 3) + 's';
+            
+            document.getElementById('heartGarden').appendChild(kiss);
+            
+            setTimeout(() => {
+                if (kiss.parentNode) {
+                    kiss.parentNode.removeChild(kiss);
+                }
+            }, 8000);
+        }
+
+        // Liebesbotschaften erstellen
+        function createLoveMessage() {
+            const message = document.createElement('div');
+            message.className = 'love-message';
+            message.innerHTML = loveMessages[Math.floor(Math.random() * loveMessages.length)];
+            
+            const x = Math.random() * 300;
+            const y = Math.random() * 300;
+            
+            message.style.left = x + 'px';
+            message.style.top = y + 'px';
+            message.style.animationDelay = Math.random() * 3 + 's';
+            
+            document.getElementById('heartGarden').appendChild(message);
+            
+            setTimeout(() => {
+                if (message.parentNode) {
+                    message.parentNode.removeChild(message);
+                }
+            }, 10000);
+        }
+
+        // Haupt-Herz Interaktionen
+        const mainHeart = document.getElementById('mainHeart');
+        const heartGarden = document.getElementById('heartGarden');
+
+        mainHeart.addEventListener('click', () => {
+            loveCount += Math.floor(Math.random() * 5) + 1;
+            loveCountElement.textContent = loveCount;
+            
+            // Explosion von Herzen
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => createFloatingHeart(), i * 100);
+            }
+            
+            // Partikel-Burst
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => createLoveParticle(), i * 50);
+            }
+            
+            // Cursor-Effekt
+            cursor.style.transform = 'translate(-50%, -50%) scale(2)';
+            setTimeout(() => {
+                cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+            }, 300);
+        });
+
+        heartGarden.addEventListener('mouseenter', () => {
+            cursor.innerHTML = '💝';
+        });
+
+        heartGarden.addEventListener('mouseleave', () => {
+            cursor.innerHTML = '💕';
+        });
+
+        // Zitate wechseln
+        let quoteIndex = 0;
+        setInterval(() => {
+            quoteIndex = (quoteIndex + 1) % loveQuotes.length;
+            document.getElementById('loveQuote').innerHTML = loveQuotes[quoteIndex];
+        }, 8000);
+
+        // Kontinuierliche Element-Erzeugung
+        setInterval(createFloatingHeart, 2000);
+        setInterval(createLoveParticle, 1500);
+        setInterval(createKissEmoji, 4000);
+        setInterval(createLoveMessage, 6000);
+
+        // Initiale Elemente
+        for (let i = 0; i < 8; i++) {
+            setTimeout(createFloatingHeart, i * 300);
+        }
+        for (let i = 0; i < 5; i++) {
+            setTimeout(createLoveParticle, i * 200);
+        }
+        for (let i = 0; i < 3; i++) {
+            setTimeout(createKissEmoji, i * 1500);
+        }
+        createLoveMessage();
+    </script>
+</body>
+</html>
