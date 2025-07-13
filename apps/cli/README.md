@@ -1,0 +1,1 @@
+The 'cli' project uses the latest deno runtime and api features (successor of node), with native typescript support. Extended with packages (from denoland or npm and jsr).
